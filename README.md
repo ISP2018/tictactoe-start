@@ -25,6 +25,8 @@ to the board so they can add and remove pieces.
 
 ## Exercises (Revised 17 August)
 
+**Revised 17 Aug 2018** I reordered and clarified the assignment.  The ISP2018 class does **not** have to follow these instructions, but some parts may be helpful.
+
 Do the following exercises in the order shown.
 When done, push all your work including all branches to Github.
 
@@ -36,21 +38,21 @@ and do your work there.
 
 ### 1. Code Review
 
-Review the code in the TicTacToeGame class.
+Review the code in the TicTacToeGame class.  Since code review takes time, just do this one class.
 
-1. Review the entire file and look the following kinds of defects:
-   * Missing or incomplete class Javadoc
+Try to find 3 issues.
+
+1. Review the entire code. Look the following kinds of defects:
+   * Missing or incomplete class Javadoc. (Ignore method Javadoc.)
    * Magic Numbers: using numbers for important values instead of a variable or named constant
-   * Repetitive code or logic: is same code or logic repeated?
-   * Fragile code: is there anything that would fail if we change some other part of tic-tac-toe?
+   * Repetitive code or logic: is same code or logic repeated? 
    * Logic errors: the most important!  A logic error is code that performs incorrect logic.  These can be hard to find when reviewing someone else's code.
-2. For each defect create an issue in your Github repo for the assignment, and give it a name.
-   * For each defect you find, open an issue on Github.
-   * If the issue is connected to specific lines of code, include a reference to the line numbers (demo how to in class).
+2. For each defect, create an issue in your Github repo for the assignment, and give it a name.
+   * If the issue is connected to specific lines of code, include a reference to the line numbers (demo how to in class).  You can also create issues by clicking to the left of a line of code on Github.
 
 ### 2. Fix and Close the Issues Using Commit Messages
 
-1. Fix the issues you find -- on the `dev` branch.
+1. Working on the `dev` branch, fix the issues you found.
 2. Test the code.  
    * For issues like Javadoc and bad coding, you'll need to review the code to verify its correct.  For Javadoc, you can look at the Javadoc inside your IDE (does it look good?).
    * For other issues, test by running and playing the game. You should test 3 cases: X wins, O wins, Draw.  Be creative.
@@ -61,19 +63,20 @@ Review the code in the TicTacToeGame class.
 
 1. Once the code is working, merge changes from `dev` into `master` on your local repo.
 2. Push the updated `master` to Github.
-3. Verify that all issues are now closed.
-
+3. On the Github web interface, verify that all issues are now closed.
 
 ### 4. Create a Release Tag
  
-1. Add an annotated tag named "VER_1.0" for this release, on the `master` branch.
-2. Push the tag to Github.  Go to Github's web interface and verify that the tag is there.
+1. Add an annotated tag named "VER_1.0" for this release, on the `master` branch of your local repository:   
+   ```git tag -a -m "Release version 1.0 of Tic-tac-toe" VER_1.0```
+2. Push the tag to Github using `git push --tags`.  
+3. Go to Github's web interface and verify that the tag is there.
 
 ### 5. Add a New Feature: 4x4 Tic-Tac-Toe
 
 The World TicTacToe Association (WTA) wants to you modify the game to use a 4x4 board.
 
-1. Add an issue for this.  Give the issue a label of "enhancement".
+1. Add an issue for this.  Give the issue a label of "enhancement". Labels are shown on the right of the New Issue screen.
 2. Start work on the `dev` branch.
 
 
