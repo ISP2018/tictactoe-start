@@ -4,56 +4,164 @@
 
 A tic-tac-toe game written using JavaFX.
 
-| Class  | Responsibility              |
-|--------|-----------------------------|
-| Main   | Start the app, show the view. |
-| GameUI.fxml | FXML file for game board and buttons. |
+| Class          | Responsibility              |
+|----------------|-----------------------------|
+| Main           | Start the app, show the view. |
+| GameUI.fxml    | FXML file for game board and buttons. |
 | GameController | Handle user input, update game. |
 | TicTacToeGame  | "Model" in MVC. Logic for tic-tac-toe. Also updates board. |
 | Board          | View of the game board, using JavaFX components. |
 | Player         | Enum of players: X, O, and NONE. |
-| Piece          | When a player clicks on BoardSquare, a Piece containing "X" or "O" for a Player is added to board. |
+| Piece          | Game object representing a player on a square ("X", "O", or NONE)|
 
+### Design Notes
 
-Please do the following exercises in the order given.
+The fxml file doesn't contain the game board.
+It contains a Pane with fx:id `centerPane`. The controller
+dynamically adds the board (a GridPane object) to the pane.
+This is so that (a) we can change the size of the board,
+(b) the controller and model (TicTacToeGame) have a reference
+to the board so they can add and remove pieces.
+
+## Exercises (Revised 17 August)
+
+Do the following exercises in the order shown.
+When done, push all your work including all branches to Github.
+
+### 1. Create a Development (`dev`) Branch
+
+We don't want to work directly on "master", so create a `dev` branch
+and do your work there.
+
 
 ### 1. Code Review
 
 Review the code in the TicTacToeGame class.
-Find at least 3 defects. Defects may include bad style,
-missing Javadoc, or failing to follow guidelines as you
-learned in Programming 2.
 
-**To Do:** 
+1. Review the entire file and look the following kinds of defects:
+   * Missing or incomplete class Javadoc
+   * Magic Numbers: using numbers for important values instead of a variable or named constant
+   * Repetitive code or logic: is same code or logic repeated?
+   * Fragile code: is there anything that would fail if we change some other part of tic-tac-toe?
+   * Logic errors: the most important!  A logic error is code that performs incorrect logic.  These can be hard to find when reviewing someone else's code.
+2. For each defect create an issue in your Github repo for the assignment, and give it a name.
+   * For each defect you find, open an issue on Github.
+   * If the issue is connected to specific lines of code, include a reference to the line numbers (demo how to in class).
 
-1. For each defect you find, open an issue on Github.
-In the issue describe the problem and reference to the file
-or lines in the file (you can include reference to code lines in issues).
-2. Completely review the class before fixing issues.
-3. Fix the issues in code and review again.
-4. Run the JUnit tests to verify you didn't introduce any errors.
-5. Commit code and close the issue.  Close the issues using [keywords in commit messages](https://help.github.com/articles/closing-issues-using-keywords/).  For example: `git commit -m "This closes #2"`, when you push to the default branch will close issue 2.  See [list of keywords](https://help.github.com/articles/closing-issues-using-keywords/) that Github recognizes.
+### 2. Fix and Close the Issues Using Commit Messages
 
-### 2. Create a Release Tag
+1. Fix the issues you find -- on the `dev` branch.
+2. Test the code.  
+   * For issues like Javadoc and bad coding, you'll need to review the code to verify its correct.  For Javadoc, you can look at the Javadoc inside your IDE (does it look good?).
+   * For other issues, test by running and playing the game. You should test 3 cases: X wins, O wins, Draw.  Be creative.
+3. When fixed, commit the code and close issues using [keywords in commit messages](https://help.github.com/articles/closing-issues-using-keywords/).    
+   For example: `git commit -m "This closes #2"`. When you push code to Github it will close issue 2.  See [list of keywords](https://help.github.com/articles/closing-issues-using-keywords/) that Github recognizes.
+
+### 3. Merge `dev` into `master` and push updates
+
+1. Once the code is working, merge changes from `dev` into `master` on your local repo.
+2. Push the updated `master` to Github.
+3. Verify that all issues are now closed.
+
+
+### 4. Create a Release Tag
  
-Add an annotated tag named "VER_1.0" for this release.
+1. Add an annotated tag named "VER_1.0" for this release, on the `master` branch.
+2. Push the tag to Github.  Go to Github's web interface and verify that the tag is there.
 
-### 3. Create a Feature Branch for Next Iteration
+### 5. Add a New Feature: 4x4 Tic-Tac-Toe
 
-The World TicTacToe Association (WTA) wants to you modify game to use a 4x4 board.
-Create a new branch for this work. 
-Check out the branch and make changed necessary for 4x4 tic-tac-toe.
-Periodically push the branch code to Github.
-Write JUnit tests for the TicTacToe class to verify it works for 4x4 game.
+The World TicTacToe Association (WTA) wants to you modify the game to use a 4x4 board.
 
-### 4. Flash News!
+1. Add an issue for this.  Give the issue a label of "enhancement".
+2. Start work on the `dev` branch.
 
-To be announced...
 
-### 5. What to Submit
+### 6. Flash News!  A Serious Bug.
 
-When the new 4x4 TicTacToe is working, and has incorporated (merged) the bug fix from Item 4:
+1. There is a serious **bug** in Version 1.0.  You need to fix it immediately.  Bug described in class.
+2. Commit your work on the local `dev` branch.
+3. Switch back to `master` and checkout the VER_1.0 revision.  This is probably still the HEAD on master.
+4. Verify that you can reproduce the bug.
+5. Add an issue on Github with label **bug** (the red label):
+   > Title: Player can still move after game is over.    
+   > Description:    
+   > A player can still make a move after the game has been won.
+   > In some cases, the losing player can become winner by making a move after game is over.
+5. Create a new branch: `fix_gameover_bug`. Switch to this branch to fix the bug.
+6. Fix the bug.  See if you can find and fix it yourself.  For the Java-challenged, some help is provided below.
+7. Test Your Solution.  Moves should not be allowed after the game is won.
 
-1. create a JAR file and add it do the `dist/` directory
-2. merge the branch into master
-3. create an annotated tag "VER_2.0" for this release
+#### Tracking Down the Problem
+
+First, what happens when a player clicks on a square?  We need to look in the controller class (GameController) for that.  The `initialize()` method adds an `OnMouseClick` event handler to each square. The method is `handleCellClicked()`.
+
+Next, what does `handleCellClicked()` do?  The important part of the code is:
+```java
+    if (game.canMoveTo(player, col, row)) {
+        game.moveTo(new Piece(player, size), col, row);
+        // The game will add piece to the board
+    }
+    updateGameStatus();
+```
+So, if we fix the logic in `game.canMoveTo()` so that it returns false when the game is over, then no one will be able to make a move!  This makes sense: it is the TicTacToeGame's responsibility to decide when the game is over.
+
+Examime the code for `TicTacToeGame`.  In the `canMoveTo()` method, check if the game is over (the 3rd "if" statement is added):
+```java
+public boolean canMoveTo(Player player, int col, int row) {
+	if (row<0 || row>pieces.length) return false;
+	if (col<0 || col>pieces[row].length) return false;
+       if ( isGameOver() ) return false;   // NEW: don't allow move 
+	return pieces[row][col] == null || pieces[row][col] == Piece.NONE;
+}
+```
+
+Compile and run the code.  Does it fix the problem?
+
+Answer: No.
+
+There is another bug.  When a player "wins" the code does not always change the value of `gameOver`.  An easy way to fix this is in `moveTo`. After each move, if there is a winner then change the gameOver property.
+```java
+public void moveTo(Piece piece, int col, int row) {
+    ...
+    ...
+//TODO Combine these 2 if statements into a single "if"
+    /** after each move check if board is full */
+	if (boardIsFull()) gameOver.set(true);
+    /** always check if someone has won */
+    if (winner() != Player.NONE) gameOver.set(true);
+}
+```
+
+### 7. Close the Bug Issue. Merge fix into Master and Tag It.
+
+1. Commit your code.  In the commit message add a phrase like "Fixes #4" (the issue number).
+2. Switch back to `master` and merge the `fix_gameover_bug` branch into master.
+3. Add an annotated tag such as `VER_1.0.1`. The tag message should mention that it includes code to fix issue #4.
+4. Push everything to Github, including the tag and `fix_gameover_bug` branch.
+
+### 8. Back to Work on 4x4 Tic-Tac-Toe
+
+1. Switch back to the `dev` branch.
+2. Merge in the bug fix code from `master`.
+3. Implement 4x4 tic-tac-toe.
+4. Test it, Review it.  We don't want another embarassing bug.
+5. When your code works, do 3 things:
+   a. create a runnable JAR file of the game in directory `dist/` inside the project top-level dir (**not** inside the `src/` dir).
+   b. Commit everything including the JAR file.
+   c. Merge commits from `dev` into `master`.
+6. On `master` add the annotated tag `VER_2.0`.
+7. Commit everything and push to Github.
+
+### What to Submit
+
+On Github you should have:
+
+1. Issues for all the bugs and defects (all closed).
+2. Issues for the 4x4 "enhancement".
+3. These branches: `master`, `dev`, `fix_gameover_bug`.
+4. Tags: `VER_1.0`, `VER_1.0.1`, `VER_2.0`.
+5. Up-to-date source code on `master`.
+6. A runnable Jar file on `master` in `/dist`.
+
+

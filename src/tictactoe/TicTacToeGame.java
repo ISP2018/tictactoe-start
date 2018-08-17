@@ -136,7 +136,10 @@ public class TicTacToeGame {
 		return gameOver;
 	}
 	
-	/** Get player who's turn it is to move. */
+	/** 
+	 * Get player who's turn it is to move. 
+	 * @return player who's turn it is.
+	 */
 	public Player getNextPlayer() {
 		return nextPlayer;
 	}
