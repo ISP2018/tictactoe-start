@@ -37,9 +37,9 @@ public class GameController {
 		centerPane.prefWidthProperty().bind(board.prefWidthProperty());
 		centerPane.prefHeightProperty().bind(board.prefHeightProperty());
 		
-		// listen to each square for mouse click
-		EventHandler<MouseEvent> mouseClicked = this::handleCellClicked;
-		board.getChildren().forEach(child -> child.setOnMouseClicked(mouseClicked));
+		// Listen to each square for mouse click and invoke handleCellClicked()
+		EventHandler<MouseEvent> onMouseClick = this::handleCellClicked; // this is a reference to method handleCellClicked()
+		board.getChildren().forEach(child -> child.setOnMouseClicked(onMouseClick));
 		// The "New Game" button action
 		newGameButton.setOnAction( this::handleNewGameEvent );
 		
