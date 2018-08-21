@@ -102,14 +102,16 @@ Since this bug is related to what the game does when a user clicks on a square l
 
 We need to look in the controller class `GameController`, because it is the controler that receives UI-generated events.   
 
-The `initialize()` method adds an `OnMouseClick` event handler to each square. The event handler method is `handleCellClicked()`. 
+The `initialize()` method adds an `OnMouseClick` event handler to each square. The code to add event handlers is:
 ```
     // Listen to each square for mouse click and invoke handleCellClicked()
+    // First define an EventHandler that refers to our handleCellClicked method
     EventHandler<MouseEvent> onMouseClick = this::handleCellClicked;
+    // board is a Container, it contains nodes for squares on the game board
     board.getChildren().forEach(child -> child.setOnMouseClicked(onMouseClick));
 ```
 
-So, mouse click events are handled by `handleCellClicked()`.
+So, mouse click events are handled by the `handleCellClicked()` method.
 What does `handleCellClicked` do when user clicks on a square? 
 The important part of the method is:
 ```java
@@ -128,7 +130,7 @@ Examime the code for `TicTacToeGame`.  In the `canMoveTo()` method, we add one l
 public boolean canMoveTo(Player player, int col, int row) {
     if (row<0 || row>pieces.length) return false;
     if (col<0 || col>pieces[row].length) return false;
-    if ( isGameOver() ) return false;   // NEW: don't allow move 
+    if ( isGameOver() ) return false;   // NEW: check if the game is over
 	return pieces[row][col] == null || pieces[row][col] == Piece.NONE;
 }
 ```
