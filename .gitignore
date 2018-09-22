@@ -2,3 +2,6 @@
 bin/
 build/
 out/
+.project
+.settings/
+.classpath
