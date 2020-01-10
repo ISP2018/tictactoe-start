@@ -33,8 +33,8 @@ public class TicTacToeGame {
 	
 	public void startNewGame() {
 		// Avoid nulls. Assign a "none" object to each location on the board.
-		for(int row=0; row<3; row++) 
-			for(int col=0; col<3; col++) pieces[row][col] = Piece.NONE;
+		for(int row=0; row<boardsize; row++) 
+			for(int col=0; col<boardsize; col++) pieces[row][col] = Piece.NONE;
 		// Remove Pieces from the board (view), but not the squares themselves. Use a Predicate to test for Piece.
 		Predicate<Node> isPiece = (node) -> node instanceof Piece;
 		board.getChildren().removeIf(isPiece);
@@ -48,6 +48,7 @@ public class TicTacToeGame {
 	public boolean canMoveTo(Player player, int col, int row) {
 		if (row<0 || row>pieces.length) return false;
 		if (col<0 || col>pieces[row].length) return false;
+		if (isGameOver()) return false;
 		return pieces[row][col] == null || pieces[row][col] == Piece.NONE;
 	}
 	
@@ -70,9 +71,12 @@ public class TicTacToeGame {
 		/** next player's turn to move. */
 		if (piece.type == Player.X) nextPlayer = Player.O;
 		else nextPlayer = Player.X;
+		
+		/** check for a winner. */
+		if (winner() != Player.NONE) gameOver.set(true);
+		
 		/** after each move check if board is full */
 		if (boardIsFull()) gameOver.set(true);
-		
 	}
 	
 	/**
@@ -106,17 +110,23 @@ public class TicTacToeGame {
 		}
 		// Look for N matching pieces on downward diagonal.
 		Player p = pieces[0][0].type;
-		if (p != Player.NONE && p == pieces[1][1].type && p == pieces[2][2].type) {
-			// all pieces on diagonal occupied by same type (Player)
-			return p;
+		for(int col=1; col<boardsize; col++) {
+			if (p != pieces[col][col].type) {
+				p = Player.NONE;
+				break;
+			}
 		}
+		if (p != Player.NONE) return p;
 		// Look for N matching pieces on upward diagonal
-		p = pieces[0][2].type; // start at lower-left corner
-		if (p != Player.NONE && p == pieces[1][1].type && p == pieces[2][0].type) {
-			// all pieces on diagonal occupied by same type (Player)
-			return p;
+		p = pieces[0][boardsize-1].type; // start at lower-left corner
+		for(int col=1; col<boardsize; col++) {
+			int row = boardsize - col - 1;
+			if (p != pieces[col][row].type) {
+				p = Player.NONE;
+				break;
+			}
 		}
-		return Player.NONE;
+		return p;
 	}
 	
 	/**

@@ -8,9 +8,9 @@ A tic-tac-toe game written using JavaFX.
 |----------------|-----------------------------|
 | Main           | Start the app, show the view. |
 | GameUI.fxml    | FXML file for game board and buttons. |
-| GameController | Handle user input, update game. |
-| TicTacToeGame  | "Model" in MVC. Logic for tic-tac-toe. Also updates board. |
-| Board          | View of the game board, using JavaFX components. |
+| GameController | Handle user input, communicate between game and UI. |
+| TicTacToeGame  | Logic for tic-tac-toe, evaluates moves and updates game. "Model" in MVC. |
+| Board          | View of the game board using JavaFX components. |
 | Player         | Enum of players: X, O, and NONE. |
 | Piece          | Game object representing a player on a square ("X", "O", or NONE)|
 
@@ -18,46 +18,49 @@ A tic-tac-toe game written using JavaFX.
 
 The fxml file doesn't contain the game board.
 It contains a Pane with fx:id `centerPane`. The controller
-dynamically adds the board (a GridPane object) to the pane.
+dynamically adds the board (a GridPane object) to the centerPane.
 This is so that (a) we can change the size of the board,
 (b) the controller and model (TicTacToeGame) have a reference
-to the board so they can add and remove pieces.
+to the board so they can add and remove pieces, and add a mouse event
+listener.
 
 ## Exercises (Revised 17 August)
 
 **Revised 17 Aug 2018** I reordered and clarified the assignment.  The ISP2018 class **is not required** to follow these instructions, but some parts may be helpful.
 
 Do the following exercises in the order shown.
-When done, push all your work including all branches to Github.
+When done, push all your work including all branches and tags to Github.
 
 ### 1. Create a Development (`dev`) Branch
 
 We don't want to work directly on "master", so create a `dev` branch
 and do your work there.  Use `git branch dev` and then `git checkout`.
+
 * There is _one_ git command that does both actions. What is it?
 
 ### 2. Code Review
 
-Review the code in the TicTacToeGame class.  Since code review takes time, just do this one class.  Code reviews should have a goal and a checklist of what to look for (item 1).
+Review the code in the TicTacToeGame class.  Since code review takes time, just review this one class.  Code reviews should have a goal and checklist of what to look for (item 1).
 
 Try to find 3 issues.
 
 1. Review the entire code. Look the following kinds of defects:
-   * Missing or incomplete class Javadoc. (Ignore method Javadoc.)
-   * Magic Numbers: using numbers for important values instead of a variable or named constant
-   * Repetitive code or logic: is same code or logic repeated? 
-   * Logic errors: the most important!  A logic error is code that performs incorrect logic.  These can be hard to find when reviewing someone else's code.
+   [ ] Missing or incomplete class Javadoc. (Ignore method Javadoc.)
+   [ ] Magic Numbers: using numbers for important values instead of a variable or named constant
+   [ ] Repetitive code or logic: is same code or logic repeated? 
+   [ ] Logic errors. A logic error is code that performs incorrect logic.  These can be hard to find when reviewing someone else's code.
 2. For each defect, create an issue in your Github repo for the assignment, and give it a descriptive name.
    * If the issue is connected to specific lines of code, include a reference to the line numbers (demo how to in class).  You can also create issues by clicking to the left of a line of code on Github.
 
-### 3. Fix and Close the Issues Using Commit Messages
+### 3. Fix the Issues. Close the Issues Using Commit Messages
 
 1. Working on the `dev` branch, fix the issues you found.
 2. Test the code.  
-   * For issues like Javadoc and bad coding, you'll need to review the code to verify its correct.  For Javadoc, you can look at the Javadoc inside your IDE (does it look good?).
+   * For issues like Javadoc and bad coding, you should review the code to verify its correct.  For Javadoc, you can look at the Javadoc inside your IDE (does it look good?).
    * For other issues, test by running and playing the game. You should test 3 cases: X wins, O wins, Draw.  Be creative.
 3. When fixed, commit the code and close issues using [keywords in commit messages](https://help.github.com/articles/closing-issues-using-keywords/).    
    For example: `git commit -m "This closes #2"`. When you push code to Github it will close issue 2.  See [list of keywords](https://help.github.com/articles/closing-issues-using-keywords/) that Github recognizes.
+4. Push the `dev` branch to Github.
 
 ### 4. Merge `dev` into `master` and push updates
 
@@ -67,7 +70,7 @@ Try to find 3 issues.
 
 ### 5. Create a Release Tag in Master Branch
  
-1. Add an annotated tag named "VER_1.0" for this release, on the `master` branch of your local repository:   
+1. Create an annotated tag named "VER_1.0" for this release, on the `master` branch of your local repository:   
    ```git tag -a -m "Release version 1.0 of Tic-tac-toe" VER_1.0```
 2. Push the tag to Github using `git push --tags`.  
 3. Go to Github's web interface and verify that the tag is there.
@@ -85,7 +88,7 @@ The World TicTacToe Association (WTA) wants to you modify the game to use a 4x4 
 1. There is a serious **bug** in Version 1.0.  You need to fix it immediately!  Bug is described in class.
 2. Commit (save) your work on the local `dev` branch.
 3. Switch back to `master` and checkout the VER_1.0 revision.  This is probably still the HEAD on master.
-4. Verify that you can reproduce the bug.
+4. Verify that you can reproduce the bug.  Can you?
 5. Add an issue on Github with label **bug** (the red label):
    > Title: Player can still move after game is over.    
    > Description:    
@@ -139,12 +142,12 @@ Compile and run the code.  Does it fix the problem?
 
 Answer: No.
 
-There is another bug.  When a player "wins" the code does not always change the value of `gameOver`.  An easy way to fix this is in `moveTo`. After each move, if there is a winner then set the gameOver property to `true`.
+There is another problem.  When a player "wins" the code does not always change the value of `gameOver`.  An easy way to fix this is in `moveTo`. After each move, if there is a winner then set the gameOver property to `true`.
 ```java
 public void moveTo(Piece piece, int col, int row) {
     ...
     ...
-//TODO Combine these 2 if statements into a single "if"
+
     /** after each move check if board is full */
 	if (boardIsFull()) gameOver.set(true);
     /** always check if someone has won */
@@ -152,7 +155,7 @@ public void moveTo(Piece piece, int col, int row) {
 }
 ```
 
-### 8. Close the Bug Issue. Merge fix into Master and Tag It.
+### 8. Close the Bug Issue. Merge fix into Master and Tag It
 
 1. Commit your code.  In the commit message add a phrase like "Fixes #4" (the issue number).
 2. Switch back to `master` and merge the `fix_gameover_bug` branch into master.
@@ -176,8 +179,8 @@ public void moveTo(Piece piece, int col, int row) {
 
 On Github you should have:
 
-1. Issues for all the bugs and defects.  All issues are closed, with reference to the commit that fixed the issue.
-2. Issue(s) for the 4x4 "enhancement".  Also closed.
+1. Issues for all the defects.  All issues are closed, with reference to the commit that fixed the issue.
+2. Issue(s) for the 4x4 game enhancement.  Also closed.
 3. These branches: `master`, `dev`, `fix_gameover_bug`.
 4. Tags: `VER_1.0`, `VER_1.0.1`, `VER_2.0`.
 5. Up-to-date source code on `master`.
@@ -187,4 +190,39 @@ On Github you should have:
 
 Using the Github web interface you can easily verify each of the above items.
 
+### Running Under Java 11 and JavaFX 11
 
+Beginning with Java version 11, the JDK does not include JavaFX.
+To use JavaFX with JDK 11 and later, download the matching release of JavaFX 
+from [https://gluonhq.com/products/javafx/](https://gluonhq.com/products/javafx/).
+
+> As usual, you should install JavaFX in a convenient location **without any space** in the path.
+> Shorter paths are better.  On Linux, I use /opt/java/javafx11.
+
+
+Then you need to configure your IDE to use JavaFX in the project.
+This requires 2 things:
+* Add the JavaFX libraries (jar files in JavaFX `lib` directory) to the project
+* Add the Java VM options: 
+    `--module-path /path/to/javafx11/lib --add-modules javafx.controls,javafx.fxml`
+* Notice there is a comma between `javafx.controls` and `javafx.fxml`
+* Depending on your JavaFX application you made need to add other javafx JARs to the `--add-modules` list.  Some common JavaFX Jars are:
+     ```
+    javafx.graphics
+    javafx.media
+    javafx.web
+    ```
+### JavaFX with Java 11 in IntelliJ IDEA
+
+The specific instructions for IntelliJ are:
+
+1. From the **File** menu choose **Project Structure**
+2. Open the **Libraries** section, and click "+" (new library) and select Java.
+3. Specify the path to the JavaFX `lib` directory (not the JavaFX base directory).
+4. Give the library the name "javafx11" (default name is "lib").
+5. Click **OK**.  Apply changes and close the Project Structure dialog.
+6. Back in IntelliJ's main window, from the **Run** menu choose **Edit Configuration**.
+7. In the **VM options** field, add:    
+   `--module-path /path/to/javafx11/lib --add-modules javafx.controls,javafx.fxml`
+8. Apply changes and close the dialog.
+9. Rebuild the project.
